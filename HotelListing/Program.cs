@@ -1,3 +1,6 @@
+using HotelListing.Configurations;
+using HotelListing.Data;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.AspNetCore;
 using Serilog.Events;
@@ -15,14 +18,18 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     // Set Serilog as the default logging tool
-    builder.Host.UseSerilog();
+    // builder.Host.UseSerilog();
 
     // CORS configuration
     builder.Services.AddCors(o => {
         o.AddPolicy("AllowAll", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
     });
 
+    // Attach the AutoMapper configuration
+    builder.Services.AddAutoMapper(typeof(MapperInitializer));
+
     // Add services to the container.
+    builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
