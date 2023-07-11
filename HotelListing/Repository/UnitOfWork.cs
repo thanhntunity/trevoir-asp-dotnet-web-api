@@ -6,16 +6,16 @@ namespace HotelListing.Repository;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly DataContext _context;
-    private IGenericRepository<Country> _countries;
-    private IGenericRepository<Hotel> _hotels;
+    private IGenericRepository<Country> countries;
+    private IGenericRepository<Hotel> hotels;
 
     public UnitOfWork(DataContext context)
     {
         _context = context;
     }
-    public IGenericRepository<Country> Countries => _countries ??= new GenericRepository<Country>(_context);
+    public IGenericRepository<Country> CountryRepository => countries ??= new GenericRepository<Country>(_context);
 
-    public IGenericRepository<Hotel> Hotels => _hotels ??= new GenericRepository<Hotel>(_context);
+    public IGenericRepository<Hotel> HotelRepository => hotels ??= new GenericRepository<Hotel>(_context);
 
     public void Dispose()
     {

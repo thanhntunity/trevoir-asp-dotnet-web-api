@@ -40,7 +40,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return await query.AsNoTracking().FirstOrDefaultAsync(expression);
     }
 
-    public async Task<IList<T>> GetAll(System.Linq.Expressions.Expression<Func<T, bool>>? expression, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy, List<string>? includes)
+    public async Task<IList<T>> GetAll(System.Linq.Expressions.Expression<Func<T, bool>> expression = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, List<string> includes = null)
     {
         IQueryable<T> query = _db;
 

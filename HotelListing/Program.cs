@@ -1,5 +1,8 @@
+using System.Text.Json.Serialization;
 using HotelListing.Configurations;
 using HotelListing.Data;
+using HotelListing.IRepository;
+using HotelListing.Repository;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.AspNetCore;
@@ -28,9 +31,15 @@ try
     // Attach the AutoMapper configuration
     builder.Services.AddAutoMapper(typeof(MapperInitializer));
 
+    // Dependency injection
+    builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
     // Add services to the container.
     builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-    builder.Services.AddControllers();
+    builder.Services.AddControllers().AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
 

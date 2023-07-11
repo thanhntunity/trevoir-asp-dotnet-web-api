@@ -2,7 +2,7 @@
 
 public interface IUnitOfWork : IDisposable
 {
-    IGenericRepository<Country> Countries { get; }
-    IGenericRepository<Hotel> Hotels { get; }
+    IGenericRepository<Country> CountryRepository { get; }
+    IGenericRepository<Hotel> HotelRepository { get; }
     Task Save();
 }

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using HotelListing.DTOs;
+using HotelListing.DTOs.CountryDTO;
+using HotelListing.DTOs.HotelDTO;
 
 namespace HotelListing.Configurations;
 
@@ -7,10 +9,7 @@ public class MapperInitializer : Profile
 {
     public MapperInitializer()
     {
-        // ReverseMap() means two-way mapping
-        CreateMap<Country, CountryDTO>().ReverseMap();
-        CreateMap<Country, CreateCountryDTO>().ReverseMap();
-        CreateMap<Hotel, HotelDTO>().ReverseMap();
-        CreateMap<Hotel, CreateHotelDTO>().ReverseMap();
+        CreateMap<Country, GetCountryDTO>();
+        CreateMap<Hotel, GetHotelDTO>();
     }
 }
