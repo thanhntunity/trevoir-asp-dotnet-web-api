@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HotelListing.Configurations.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelListing.Data;
 
-public class DataContext : DbContext
+public class DataContext : IdentityDbContext<User> // tell IdentityDbContext to use our User class, otherwise it will use the IdentityUser as default
 {
     public DataContext(DbContextOptions<DataContext> options) : base(options)
     {
@@ -13,52 +15,10 @@ public class DataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Country>().HasData(
-            new Country
-            {
-                Id = 1,
-                Name = "Jamaica",
-                ShortName = "JM"
-            },
-            new Country
-            {
-                Id = 2,
-                Name = "Bahamas",
-                ShortName = "BS"
-            },
-            new Country
-            {
-                Id = 3,
-                Name = "Cayman Island",
-                ShortName = "CI"
-            }
-        );
+        base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Hotel>().HasData(
-            new Hotel
-            {
-                Id = 1,
-                Name = "Sandals Resort and Spa",
-                Address = "Negril",
-                CountryId = 1,
-                Rating = 4.5
-            },
-            new Hotel
-            {
-                Id = 2,
-                Name = "Grand Palldium",
-                Address = "Nassua",
-                CountryId = 2,
-                Rating = 4.0
-            },
-            new Hotel
-            {
-                Id = 3,
-                Name = "Comfort Suites",
-                Address = "George Town",
-                CountryId = 3,
-                Rating = 4.3
-            }
-        );
+        modelBuilder.ApplyConfiguration(new CountryConfiguration());
+        modelBuilder.ApplyConfiguration(new HotelConfiguration());
+        modelBuilder.ApplyConfiguration(new RoleConfiguration());
     }
 }

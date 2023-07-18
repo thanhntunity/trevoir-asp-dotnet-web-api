@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HotelListing.DTOs.HotelDTO;
 using HotelListing.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelListing.Controllers;
@@ -37,6 +38,7 @@ public class HotelController : ControllerBase
         
     }
 
+    [Authorize]
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {

@@ -1,8 +1,11 @@
 using System.Text.Json.Serialization;
+using HotelListing;
 using HotelListing.Configurations;
 using HotelListing.Data;
 using HotelListing.IRepository;
 using HotelListing.Repository;
+using HotelListing.Services.AuthService;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.AspNetCore;
@@ -23,6 +26,11 @@ try
     // Set Serilog as the default logging tool
     // builder.Host.UseSerilog();
 
+    // Add authentication
+    builder.Services.AddAuthentication();
+    builder.Services.ConfigureIdentity();
+    builder.Services.ConfigureJWT(builder.Configuration);
+
     // CORS configuration
     builder.Services.AddCors(o => {
         o.AddPolicy("AllowAll", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
@@ -33,9 +41,13 @@ try
 
     // Dependency injection
     builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+    builder.Services.AddScoped<IAuthService, AuthService>();
+
 
     // Add services to the container.
     builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+    // Disable automapper reference looping
     builder.Services.AddControllers().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -60,6 +72,7 @@ try
 
     app.UseCors("AllowAll");
 
+    app.UseAuthentication();
     app.UseAuthorization();
 
     app.MapControllers();
