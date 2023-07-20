@@ -38,8 +38,7 @@ public class HotelController : ControllerBase
         
     }
 
-    [Authorize]
-    [HttpGet("{id:int}")]
+    [HttpGet("{id:int}", Name = "GetHotelById")]
     public async Task<IActionResult> GetById(int id)
     {
         try
@@ -55,4 +54,87 @@ public class HotelController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Administrator")]
+    [HttpPost]
+    public async Task<IActionResult> Add([FromBody] AddHotelDTO addHotelDTO)
+    {
+        if (!ModelState.IsValid)
+        {
+            _logger.LogError($"Invalid POST attempt in {nameof(Add)}");
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            var hotel = _mapper.Map<Hotel>(addHotelDTO);
+            await _unitOfWork.HotelRepository.Insert(hotel);
+            await _unitOfWork.Save();
+
+            return CreatedAtRoute("GetHotelById", new { id = hotel.Id }, hotel);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Something went wrong in the {nameof(Add)}");
+            return StatusCode(500, "Internal server error.Please try again later.");
+        }
+    }
+
+
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateHotelDTO updateHotelDTO)
+    {
+        if (!ModelState.IsValid || id < 1)
+        {
+            _logger.LogError($"Invalid UPDATE attempt in {nameof(Update)}");
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            var result = await _unitOfWork.HotelRepository.Get(h => h.Id == id);
+            if (result is null)
+            {
+                _logger.LogError($"Invalid UPDATE attempt in {nameof(Update)} method");
+                return BadRequest("Submitted data is invalid");
+            }
+            _mapper.Map(updateHotelDTO, result);
+            _unitOfWork.HotelRepository.Update(result);
+            await _unitOfWork.Save();
+
+            return NoContent();
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Something went wrong in the {nameof(Update)}");
+            return StatusCode(500, "Internal server error. Please try again later.");
+        }
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        if (id < 1)
+        {
+            _logger.LogError($"Invalid DELETE attempt in the {nameof(Delete)} method");
+            return BadRequest();
+        }
+        try
+        {
+            var result = await _unitOfWork.HotelRepository.Get(h => h.Id == id);
+            if (result is null)
+            {
+                _logger.LogError($"Invalid DELETE attempt in the {nameof(Delete)} method");
+                return BadRequest("Submitted data is invalid");
+            }
+            await _unitOfWork.HotelRepository.Delete(id);
+            await _unitOfWork.Save();
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Invalid DELETE attempt in the {nameof(Delete)} method");
+            return StatusCode(500, "Internal server error. Please try again later.");
+        }
+    }   
 }

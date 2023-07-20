@@ -1,8 +1,8 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace HotelListing.DTOs.HotelDTO;
 
-public class AddHotelDTO
+public class UpdateHotelDTO
 {
     [Required]
     [StringLength(maximumLength: 150, ErrorMessage = "Hotel name is too long")]
@@ -13,6 +13,6 @@ public class AddHotelDTO
     [Required]
     [Range(1,5)]
     public double Rating { get; set; }
-    // [Required]
+    [Required]
     public int CountryId { get; set; }
 }

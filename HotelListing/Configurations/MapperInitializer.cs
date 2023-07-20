@@ -14,5 +14,9 @@ public class MapperInitializer : Profile
         CreateMap<Hotel, GetHotelDTO>();
         CreateMap<RegisterUserDTO, User>();
         CreateMap<LoginUserDTO, User>();
+        CreateMap<AddHotelDTO, Hotel>();
+        CreateMap<AddCountryDTO, Country>();
+        CreateMap<UpdateHotelDTO, Hotel>();
+        CreateMap<UpdateCountryDTO, Country>();
     }
 }
